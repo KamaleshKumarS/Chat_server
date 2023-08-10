@@ -22,12 +22,12 @@ const io=require('socket.io')(5000,{
 app.post('/register',(req,res)=>{
 	console.log(req.body)
 	if(req.body){
-		 Kuser.findOne({username:req.body.username,email:req.body.email},(err,val)=>{
-		console.log(val)
-		if (val!=null){
-			res.json({'userCreated':false,repeat:true})
-		}else{
-			const user1=new Kuser({
+		Kuser.findOne({username:req.body.username,email:req.body.email}).then((val,err)=>{
+			console.log(val);
+			if(val!=null){
+				res.json({'userCreated':false,repeat:true});
+			}else{
+				const user1=new Kuser({
 			username:req.body.username,
 			password:req.body.pass,
 			email:req.body.email
@@ -35,8 +35,8 @@ app.post('/register',(req,res)=>{
 			user1.save()
 			const token=generateAccessToken(user1.email);
 			res.json({'userCreated':true,token:token,user_id:user1._id});
-		}
-	})}
+			}
+		})}
 		
 	else{
 		res.json({'usercreated':false});
